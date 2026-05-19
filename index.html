@@ -37,6 +37,8 @@ body{background:var(--navy);font-family:'Nunito',sans-serif;color:var(--white);m
 .text-input{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(90,172,240,.25);border-radius:11px;color:var(--white);font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;padding:13px 15px;outline:none;transition:border .2s}
 .text-input:focus{border-color:var(--accent);background:rgba(255,255,255,.09)}
 .text-input::placeholder{color:rgba(255,255,255,.25);font-weight:600;font-size:14px}
+#nome-impresso{text-transform:uppercase;letter-spacing:.5px}
+#nome-impresso::placeholder{text-transform:none;letter-spacing:normal}
 .input-hint{font-size:10px;color:rgba(255,255,255,.35);margin-top:5px;font-style:italic;padding-left:4px}
 
 /* TIPO TABS */
@@ -221,8 +223,8 @@ body{background:var(--navy);font-family:'Nunito',sans-serif;color:var(--white);m
     <div class="card">
 
       <p class="sub-label">Nome para imprimir na camiseta</p>
-      <input class="text-input" type="text" id="nome-impresso" placeholder="Ex: João Pedro">
-      <p class="input-hint">Escreva exatamente como deve aparecer na peça</p>
+      <input class="text-input" type="text" id="nome-impresso" placeholder="Ex: João Pedro" autocapitalize="characters" autocomplete="off">
+      <p class="input-hint">Será impresso em CAIXA ALTA, exatamente como aparece aqui</p>
 
       <p class="sub-label">Tipo</p>
       <div class="tipo-tabs">
@@ -509,10 +511,10 @@ function updateAddBtn(){
   const nameOk=document.getElementById('nome-impresso').value.trim().length>0;
   document.getElementById('btn-add').disabled=!(nameOk && currentTipo && currentSize);
 }
-document.getElementById('nome-impresso').addEventListener('input',updateAddBtn);
+document.getElementById('nome-impresso').addEventListener('input',function(){this.value=this.value.toUpperCase();updateAddBtn();});
 
 function addToCart(){
-  const nome=document.getElementById('nome-impresso').value.trim();
+  const nome=document.getElementById('nome-impresso').value.trim().toUpperCase();
   if(!nome||!currentTipo||!currentSize) return;
   cart.push({
     id: Date.now()+'_'+Math.random().toString(36).slice(2,7),
@@ -583,7 +585,7 @@ function _l(s){return s.length.toString().padStart(2,'0')}
 function _f(id,v){return id+_l(v)+v}
 function _crc(s){let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(let j=0;j<8;j++){c=(c&0x8000)?(c<<1)^0x1021:c<<1;c&=0xFFFF;}}return c.toString(16).toUpperCase().padStart(4,'0')}
 function genPix(key,name,city,amt){
-  const b=_f('26',_f('00','BR.GOV.BCB.PIX')+_f('01',key))+'52040000'+'5303986'+_f('54',amt.toFixed(2))+'5802BR'+_f('59',name.substring(0,25).toUpperCase())+_f('60',city.substring(0,15).toUpperCase())+_f('62',_f('05','TUBAROES2026'))+'6304';
+  const b='000201'+_f('26',_f('00','BR.GOV.BCB.PIX')+_f('01',key))+'52040000'+'5303986'+_f('54',amt.toFixed(2))+'5802BR'+_f('59',name.substring(0,25).toUpperCase())+_f('60',city.substring(0,15).toUpperCase())+_f('62',_f('05','TUBAROES2026'))+'6304';
   return b+_crc(b);
 }
 
